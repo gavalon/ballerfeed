@@ -18,6 +18,8 @@ def scrape_page(number,cursor,db):
 		cursor.execute(query)
 		db.commit()
 	
+#add ncaa, nba, d league
+#also add teams
 
 
 if __name__ == "__main__":

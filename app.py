@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, json, session, redirect
+from flask import Flask, render_template, request, json, session, redirect, jsonify
 from flask.ext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
 app.secret_key = 'why would I tell you my secret key?'
 mysql = MySQL()
@@ -101,6 +102,22 @@ def userHome():
 def logout():
     session.pop('user',None)
     return redirect('/')
+
+
+
+
+@app.route('/getPlayers',methods=['POST'])
+def getPlayers():
+    term = request.values['search_keyword']
+    print term
+    
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    query = 'SELECT * FROM players WHERE player_name LIKE ' + '"%' + str(term) + '%"' + ' LIMIT 10;'
+    cursor.execute(query)
+    data = cursor.fetchall()
+    return jsonify(data)
+
 
 
 
