@@ -13,7 +13,7 @@ $(document).ready(function(){
             	for (var key in data) {
 					if (data.hasOwnProperty(key)) {
 						player_name = data[key];
-						$("#results").append("<p>" + player_name + "</p>");
+						$("#results").append('<p><a href="/player/' + key   + '">' + player_name + "</a></p>");
 				  	}
 				}
             },

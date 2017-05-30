@@ -120,6 +120,15 @@ def getPlayers():
 
 
 
+@app.route('/player/<int:player_id>')
+def player(player_id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    query = 'SELECT * FROM players WHERE player_id =' + str(player_id) + ';'
+    cursor.execute(query)
+    data = cursor.fetchall()
+    return render_template('player.html', data=data)
+
 
 if __name__ == "__main__":
     app.run()
