@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, json, session, redirect, jsonify
 from flask.ext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
+import re
 
 
 app = Flask(__name__)
@@ -21,7 +22,10 @@ mysql.init_app(app)
 
 @app.route("/")
 def main():
-    return render_template('index.html')
+    if session.get('user'):
+        return render_template('userHome.html')
+    else:
+        return render_template('index.html')
 
 @app.route('/showSignUp')
 def showSignUp():
@@ -119,6 +123,27 @@ def getPlayers():
     return jsonify(data)
 
 
+@app.route('/followPlayer',methods=['POST'])
+def followPlayers():
+    if session.get('user'):
+        player = str(request.values['player'])
+        player_id = re.findall('/player/(.+?)', player)[0] 
+
+        user = session.get('user')
+        print user
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        query = 'INSERT INTO follows (user_id, player_id) VALUES (' + str(user) + ', ' + str(player_id) + ');'
+        print query
+
+        cursor.execute(query)
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return player_id
+
+
 
 @app.route('/player/<int:player_id>')
 def player(player_id):
@@ -127,7 +152,8 @@ def player(player_id):
     query = 'SELECT * FROM players WHERE player_id =' + str(player_id) + ';'
     cursor.execute(query)
     data = cursor.fetchall()
-    return render_template('player.html', data=data)
+    name = data[0][1]
+    return render_template('player.html', name=name)
 
 
 if __name__ == "__main__":

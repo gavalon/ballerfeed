@@ -12,6 +12,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="../static/js/jquery-3.2.1.min.js"></script>
     <script src="../static/js/instant.js"></script>
+    <script src="../static/js/follow.js"></script>
  
  
 </head>
@@ -34,8 +35,9 @@
         </div>
  
         <div class="jumbotron">
-            <div>{{ data }}</div>
- 
+            <div id="followSuccess"></div>
+            <button type="button" class="btn btn-primary" id="follow">Follow <span>{{ name }}</span></button>
+            
         </div>
  
  
