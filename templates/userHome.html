@@ -34,6 +34,10 @@
         </div>
  
         <div class="jumbotron">
+            {% for follow in follows %}
+            <div class=flash>{{ follow }}</div>
+          {% endfor %}
+            
             <div id="results"></div>
  
         </div>

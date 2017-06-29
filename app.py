@@ -23,7 +23,14 @@ mysql.init_app(app)
 @app.route("/")
 def main():
     if session.get('user'):
-        return render_template('userHome.html')
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        follows = get_follows(cursor,session.get('user'))
+
+        names = get_names(cursor,follows)
+        
+
+        return render_template('userHome.html', follows=names)
     else:
         return render_template('index.html')
 
@@ -80,7 +87,7 @@ def validateLogin():
         if len(data) > 0:
             if check_password_hash(str(data[0][3]),_password):
                 session['user'] = data[0][0]
-                return redirect('/userHome')
+                return redirect('/')
             else:
                 return render_template('error.html',error = 'Wrong Email address or Password.')
         else:
@@ -127,7 +134,7 @@ def getPlayers():
 def followPlayers():
     if session.get('user'):
         player = str(request.values['player'])
-        player_id = re.findall('/player/(.+?)', player)[0] 
+        player_id = re.findall('/player/(.+)', player)[0] 
 
         user = session.get('user')
         print user
@@ -154,6 +161,32 @@ def player(player_id):
     data = cursor.fetchall()
     name = data[0][1]
     return render_template('player.html', name=name)
+
+
+def get_follows(cursor,user):
+    #this returns the list of players a user is following, in id format
+    query = 'SELECT player_id FROM follows WHERE user_id = ' + str(user) + ';'
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    follows = []
+    for datum in data:
+        follows.append(datum[0])
+
+    return follows
+
+
+def get_names(cursor,player_ids):
+    #this takes in a list of player_ids and returns a list of their names
+    query = 'SELECT player_name from players WHERE player_id IN ' + str(player_ids).replace('[','(').replace(']',')') + ';'
+    cursor.execute(query)
+    stuff = cursor.fetchall()
+
+    names = []
+    for s in stuff:
+        names.append(str(s[0]))
+    return names
+
 
 
 if __name__ == "__main__":
