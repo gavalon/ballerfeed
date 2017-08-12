@@ -1,6 +1,6 @@
 $(function(){
     $('#follow').click(function() {
-    	name = $(this).text();
+    	name = $(this).text().substring($(this).text().indexOf(" "));
         $.ajax({
         	type: "POST",
 			url: "/followPlayer",
